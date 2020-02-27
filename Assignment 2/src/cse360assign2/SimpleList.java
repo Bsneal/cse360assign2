@@ -1,7 +1,9 @@
 package cse360assign2;
 
+import java.util.Arrays;
+
 /**
- * @author Brendan Neal; class ID 123; Assignment 1
+ * @author Brendan Neal; class ID 123; Assignment 2
  */
 
 /**
@@ -29,18 +31,34 @@ class SimpleList {
 	/**
 	 * Adds an element to the head of list. In doing so, it pushes
 	 * all other array elements are pushed to the right of the array.
-	 * If the list is full, the last element is pushed off the array.
+	 * If the list is full, the method increases the list's size by 50%
 	 * 
 	 * @param value	The value that is added to the array.
 	 */
 	public void add(int value) {
+		if(count == list.length) {
+			list = Arrays.copyOf(list, (int)(list.length*1.5));
+		}
 		for(int increment = count - 1; increment >= 0; increment--) {
-			if (increment != 9) {
-				list[increment + 1] = list[increment];
-			}
+			list[increment + 1] = list[increment];
 		}
 		list[0] = value;
-		if(count < 10) count++;
+		count++;
+	}
+	
+	/**
+	 * similar to add(), but instead of inserting the value at the head of
+	 * the list, it is inserted at the tail. Also increases the list's size 
+	 * by 50% if the list is full.
+	 * 
+	 * @param value	The value appended to the array.
+	 */
+	public void append(int value) {
+		if(count == list.length) {
+			list = Arrays.copyOf(list, (int)(list.length*1.5));
+		}
+		list[count] = value;
+		count++;
 	}
 	
 	/**
@@ -51,6 +69,8 @@ class SimpleList {
 	 * It should be noted that this method doesn't delete old data.
 	 * It's assumed that because the count parameter defines the
 	 * size of the list, any values past the count will be unreachable.
+	 * However, if 25% of the list is not in use, that 25% will be truncated.
+	 * the list cannot be smaller than 1.
 	 * 
 	 * @param value	Value to be removed if it exists in the list
 	 * @return	does not return a value. Return is used as a method
@@ -65,6 +85,12 @@ class SimpleList {
 			list[increment] = list[increment - 1];
 		}
 		count--;
+		if((list.length - count) >= (int)list.length*0.25) {
+			int new_length = (int)(list.length - list.length*0.25);
+			if(new_length > 1) {
+				list = Arrays.copyOf(list, new_length);
+			}		
+		}
 	}
 	
 	/**
@@ -74,6 +100,26 @@ class SimpleList {
 	 */
 	public int count() {
 		return count;
+	}
+	
+	/**
+	 * Method that returns the first element in the list.
+	 * 
+	 * @return the first element in the list, which is at index 0.
+	 */
+	public int first() {
+		return list[0];
+	}
+	
+	/**
+	 * Method that gives the size of the list. Different from count()
+	 * in that it returns the number of possible values, not the amount
+	 * of values currently in the array.
+	 * 
+	 * @return list.length, which is the size of the array.
+	 */
+	public int size() {
+		return list.length;
 	}
 	
 	/**
@@ -101,7 +147,7 @@ class SimpleList {
 	 */
 	int search(int value) {
 		int pos = -1;
-		int increment = count;
+		int increment = count - 1;
 		while(increment >= 0) {
 			if(list[increment] == value) {
 				pos = increment;
